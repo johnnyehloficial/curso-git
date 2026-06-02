@@ -41,7 +41,7 @@
             color: #a0a0a5;
         }
         
-        /* Sistema de Navegación por Pestañas */
+        /* Sistema de Navegación por Pestañas (Regresamos a 2 Pestañas puramente técnicas) */
         .tabs-nav {
             display: flex;
             gap: 10px;
@@ -157,7 +157,7 @@
             background-color: rgba(240, 80, 50, 0.15);
             border-color: #f05032;
         }
-        .octocat-svg { width: 100px; height: 100px; fill: #ffffff; }
+        .octocat-svg { width: 90px; height: 90px; fill: #ffffff; }
         .character-label {
             margin-top: 5px;
             background-color: #f05032;
@@ -195,10 +195,10 @@
         .comic-text { font-size: 0.95rem; line-height: 1.4; font-weight: 500; }
 
         .cmd-card {
-            background-color: #25252f; border: 2px solid #4e4e5a; border-radius: 6px; padding: 10px; text-align: center; cursor: grab; user-select: none;
+            background-color: #25252f; border: 2px solid #4e4e5a; border-radius: 6px; padding: 8px 5px; text-align: center; cursor: grab; user-select: none;
         }
-        .cmd-title { font-family: 'Courier New', Courier, monospace; font-weight: bold; color: #61afef; font-size: 0.95rem; }
-        .cmd-meta { font-size: 0.7rem; color: #e5c07b; text-transform: uppercase; margin-top: 2px; }
+        .cmd-title { font-family: 'Courier New', Courier, monospace; font-weight: bold; color: #61afef; font-size: 0.9rem; }
+        .cmd-meta { font-size: 0.65rem; color: #e5c07b; text-transform: uppercase; margin-top: 2px; }
         #rightDeck .cmd-card { border-color: #98c379; background-color: #212824; cursor: pointer; }
 
         /* CUADRO DE CÓDIGO INFERIOR */
@@ -286,15 +286,25 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        .inline-copy-btn:hover {
-            background-color: #61afef;
-        }
+        .inline-copy-btn:hover { background-color: #61afef; }
+        
         .important-note {
             background-color: rgba(224, 108, 117, 0.1);
             border-left: 4px solid #e06c75;
             padding: 12px;
             margin: 12px 0;
             border-radius: 0 6px 6px 0;
+        }
+        .explanation-box {
+            background-color: #1a1a22;
+            border: 1px solid #3a3a4a;
+            padding: 12px 15px;
+            margin-top: 10px;
+            border-radius: 6px;
+        }
+        .explanation-box p {
+            font-size: 0.9rem !important;
+            color: #abb2bf !important;
         }
 
         .instruction-tip { margin-top: 15px; font-size: 0.9rem; color: #8a8a93; font-style: italic; text-align: center; }
@@ -307,7 +317,7 @@
         <p class="subtitle">Aprende conceptos fundamentales, experimenta en el laboratorio y domina el trabajo en paralelo.</p>
     </header>
 
-    <!-- Barra de Navegación del Sistema de Pestañas -->
+    <!-- Barra de Navegación del Sistema de Pestañas (Regresamos a la estructura limpia de 2 pestañas) -->
     <div class="tabs-nav">
         <button class="tab-btn active" id="btn-tab-course" onclick="switchTab('course')">Teoría & Guía del Curso</button>
         <button class="tab-btn" id="btn-tab-lab" onclick="switchTab('lab')">Cómic Interactivo (Laboratorio)</button>
@@ -319,16 +329,15 @@
             
             <div class="module-section">
                 <div class="module-title"><span class="module-badge">Módulo 1</span> La Fundación e Identidad Local</div>
-                <p><strong>Concepto clave:</strong> El código viaja por tres estados locales (Directorio de trabajo, Staging Area y Repositorio Local). Sin embargo, al trabajar en entornos distribuidos o servidores multiusuario (como Ubuntu), Git exige de forma estricta que configures tu identidad antes de registrar tu primer commit.</p>
+                <p><strong>Concepto clave:</strong> El código viaja por tres estados locales. Al trabajar en entornos distribuidos o servidores multiusuario (como Ubuntu), Git exige de forma estricta que configures tu identidad antes de registrar tu primer commit.</p>
                 
                 <div class="important-note">
-                    <strong>💡 El Enfoque del Ing. Prometeo en Servidores Multiusuario:</strong><br>
-                    El comando <code>--global</code> en Git no significa "global para toda la máquina o servidor", sino global para <strong>tu usuario del sistema operativo</strong>. Al ejecutarlo en servidores Linux donde cada programador tiene su propia carpeta Home, tu configuración se guarda de forma segura en <code>~/.gitconfig</code>, sin interferir jamás con los demás usuarios del sistema.
+                    <strong>💡 Regla de Oro Multi-Usuario:</strong> El parámetro <code>--global</code> escribe tus datos exclusivamente en <code>~/.gitconfig</code> dentro de tu propio espacio personal. Nadie más podrá pisar tu firma.
                 </div>
 
-                <h4>Laboratorio Práctico de Configuración:</h4>
+                <h4>Laboratorio de Configuración y Confirmación:</h4>
                 <ul>
-                    <li>1. Establece tu identidad para firmar tus fotos históricas de código (Nivel Global de tu usuario):</li>
+                    <li>1. Registra tu firma de autor en tu cuenta de usuario:</li>
                     <div class="theory-code-container">
                         <div class="course-code-block" id="code-theory-0a">git config --global user.name "Johnny TuApellido"</div>
                         <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-0a', this)">Copiar</button>
@@ -338,13 +347,13 @@
                         <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-0b', this)">Copiar</button>
                     </div>
                     
-                    <li style="margin-top: 15px;">2. Inicializa tu carpeta del proyecto:</li>
+                    <li style="margin-top: 15px;">2. Inicializa tu repositorio local:</li>
                     <div class="theory-code-container">
                         <div class="course-code-block" id="code-theory-1">git init</div>
                         <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-1', this)">Copiar</button>
                     </div>
                     
-                    <li>3. Prepara el archivo index.html y haz la instantánea de respaldo:</li>
+                    <li>3. Prepara el index.html y haz tu primer commit histórico:</li>
                     <div class="theory-code-container">
                         <div class="course-code-block" id="code-theory-2">git add index.html && git commit -m "feat: setup estructura inicial"</div>
                         <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-2', this)">Copiar</button>
@@ -352,12 +361,50 @@
                 </ul>
             </div>
 
+            <!-- MÓDULO 2 ENRIQUECIDO COMPLETAMENTE CON TU INFORMACIÓN TÉCNICA -->
             <div class="module-section">
-                <div class="module-title"><span class="module-badge">Módulo 2</span> La Nube y la Descentralización</div>
+                <div class="module-title"><span class="module-badge">Módulo 2</span> La Nube, Vinculación y Descentralización</div>
                 <p><strong>Concepto clave:</strong> Tu repositorio local es completamente independiente de la nube. Vincular un servidor remoto sirve como respaldo masivo y para cooperar con terceros de forma distribuida.</p>
-                <h4>Laboratorio Práctico:</h4>
+                
+                <h4>🚀 Comandos para subir tu proyecto a GitHub</h4>
+                <p>Ejecuta estos comandos en orden dentro de la carpeta <code>curso-git</code> en tu terminal de Ubuntu:</p>
+                
                 <ul>
-                    <li>Descarga un proyecto colaborativo entero desde un servidor central (GitHub/GitLab) a tu entorno de trabajo:</li>
+                    <li style="margin-top: 10px;">1. Creamos la rama principal por defecto con el nombre estándar moderno ('main'):</li>
+                    <div class="theory-code-container">
+                        <div class="course-code-block" id="code-theory-cloud1">git branch -M main</div>
+                        <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-cloud1', this)">Copiar</button>
+                    </div>
+                    <div class="explanation-box">
+                        <p><strong>🔍 Desglose Técnico Multidimensional:</strong> Renombra la rama por defecto a main. Esto asegura la compatibilidad exacta con la configuración actual de GitHub.</p>
+                    </div>
+
+                    <li style="margin-top: 15px;">2. Vinculamos tu servidor local con el repositorio vacío que creaste en la nube:</li>
+                    <div class="theory-code-container">
+                        <div class="course-code-block" id="code-theory-cloud2">git remote add origin https://github.com/TU_USUARIO/TU_REPOSITORIO.git</div>
+                        <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-cloud2', this)">Copiar</button>
+                    </div>
+                    <div class="explanation-box">
+                        <p><strong>🔍 Desglose Técnico Multidimensional:</strong> Este es el puente de descentralización. Le dice a tu Git local: "A partir de ahora, el servidor remoto en la nube se llamará 'origin' y se encuentra en esta URL".</p>
+                    </div>
+
+                    <li style="margin-top: 15px;">3. Empujamos el código local hacia la nube por primera vez:</li>
+                    <div class="theory-code-container">
+                        <div class="course-code-block" id="code-theory-cloud3">git push -u origin main</div>
+                        <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-cloud3', this)">Copiar</button>
+                    </div>
+                    <div class="explanation-box">
+                        <p><strong>🔍 Desglose Técnico Multidimensional:</strong> El comando clave. Envía tus commits locales hacia la rama main del remoto origin. El flag -u (upstream) es un atajo crucial: memoriza la conexión para que en las próximas clases tus alumnos solo tengan que escribir git push o git pull sin añadir nada más.</p>
+                    </div>
+                </ul>
+
+                <div class="important-note" style="border-left-color: #e5c07b; background-color: rgba(229, 192, 123, 0.05);">
+                    <strong>⚠️ Nota de autenticación:</strong> Al ejecutar el git push, el servidor te pedirá tus credenciales. Recuerda que desde hace unos años GitHub no acepta tu contraseña web en la terminal. Deberás introducir tu nombre de usuario y, en lugar de la contraseña, pegar tu Personal Access Token (PAT) o usar una clave SSH configurada en tu servidor Ubuntu.
+                </div>
+
+                <h4 style="margin-top: 20px;">Clonación en paralelo:</h4>
+                <ul>
+                    <li>Clonar un repositorio existente desde la nube para trabajar en otra máquina de forma independiente:</li>
                     <div class="theory-code-container">
                         <div class="course-code-block" id="code-theory-3">git clone https://github.com/usuario/repositorio.git</div>
                         <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-3', this)">Copiar</button>
@@ -367,10 +414,10 @@
 
             <div class="module-section">
                 <div class="module-title"><span class="module-badge">Módulo 3</span> Trabajo en Paralelo (Features y Ramas)</div>
-                <p><strong>Concepto clave:</strong> Las ramas (*Branches*) abren líneas de tiempo independientes. Te permiten escribir código experimental de una funcionalidad sin alterar la estabilidad de la rama principal de producción.</p>
+                <p><strong>Concepto clave:</strong> Las ramas abren líneas de tiempo independientes para programar aisladamente.</p>
                 <h4>Laboratorio Práctico:</h4>
                 <ul>
-                    <li>Crea una rama paralela e intégrate a ella de forma simultánea para iniciar el desarrollo aislado:</li>
+                    <li>Crea una rama paralela e intégrate a ella:</li>
                     <div class="theory-code-container">
                         <div class="course-code-block" id="code-theory-4">git checkout -b feature/nueva-interfaz</div>
                         <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-4', this)">Copiar</button>
@@ -380,10 +427,10 @@
 
             <div class="module-section">
                 <div class="module-title"><span class="module-badge">Módulo 4</span> Resolución de Conflictos e Integración</div>
-                <p><strong>Concepto clave:</strong> La integración (*Merge*) unifica los universos de dos ramas. Si tú y otro miembro del equipo modifican exactamente la misma línea del mismo archivo, Git detendrá el proceso exigiendo resolución manual.</p>
+                <p><strong>Concepto clave:</strong> Integrar une universos de código. Si hay cambios concurrentes en la misma línea, se genera un conflicto manual.</p>
                 <h4>Laboratorio Práctico:</h4>
                 <ul>
-                    <li>Regresa a la rama principal y atrae los cambios terminados de tu feature para consolidar el match:</li>
+                    <li>Regresa a producción y atrae los cambios terminados de la feature:</li>
                     <div class="theory-code-container">
                         <div class="course-code-block" id="code-theory-5">git checkout main && git merge feature/nueva-interfaz</div>
                         <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-5', this)">Copiar</button>
@@ -393,10 +440,10 @@
 
             <div class="module-section">
                 <div class="module-title"><span class="module-badge">Módulo 5</span> Viajes en el Tiempo (La Reversa)</div>
-                <p><strong>Concepto clave:</strong> Los errores ocurren. Git te da la habilidad de deshacer modificaciones locales o descartar commits problemáticos regresando de forma segura al pasado.</p>
+                <p><strong>Concepto clave:</strong> Habilidad de destruir o revertir commits erróneos para sanar el proyecto.</p>
                 <h4>Laboratorio Práctico:</h4>
                 <ul>
-                    <li>Borra el historial destructivo y fuerza tu espacio de trabajo local a alinearse con un commit seguro anterior:</li>
+                    <li>Fuerza tu espacio de trabajo a regresar al estado de un commit del pasado:</li>
                     <div class="theory-code-container">
                         <div class="course-code-block" id="code-theory-6">git reset --hard HEAD~1</div>
                         <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-6', this)">Copiar</button>
@@ -414,34 +461,15 @@
         <div class="workspace">
             <div class="panel-side" id="leftDeck">
                 <h3>Por Aprender</h3>
-                <div class="cmd-card" draggable="true" id="config">
-                    <div class="cmd-title">git config</div>
-                    <div class="cmd-meta">Módulo 1</div>
-                </div>
-                <div class="cmd-card" draggable="true" id="init">
-                    <div class="cmd-title">git init</div>
-                    <div class="cmd-meta">Módulo 1</div>
-                </div>
-                <div class="cmd-card" draggable="true" id="commit">
-                    <div class="cmd-title">git commit</div>
-                    <div class="cmd-meta">Módulo 1</div>
-                </div>
-                <div class="cmd-card" draggable="true" id="clone">
-                    <div class="cmd-title">git clone</div>
-                    <div class="cmd-meta">Módulo 2</div>
-                </div>
-                <div class="cmd-card" draggable="true" id="branch">
-                    <div class="cmd-title">git branch</div>
-                    <div class="cmd-meta">Módulo 3</div>
-                </div>
-                <div class="cmd-card" draggable="true" id="merge">
-                    <div class="cmd-title">git merge</div>
-                    <div class="cmd-meta">Módulo 4</div>
-                </div>
-                <div class="cmd-card" draggable="true" id="reset">
-                    <div class="cmd-title">git reset</div>
-                    <div class="cmd-meta">Módulo 5</div>
-                </div>
+                <div class="cmd-card" draggable="true" id="config"><div class="cmd-title">git config</div><div class="cmd-meta">Módulo 1</div></div>
+                <div class="cmd-card" draggable="true" id="init"><div class="cmd-title">git init</div><div class="cmd-meta">Módulo 1</div></div>
+                <div class="cmd-card" draggable="true" id="commit"><div class="cmd-title">git commit</div><div class="cmd-meta">Módulo 1</div></div>
+                <div class="cmd-card" draggable="true" id="remote"><div class="cmd-title">git remote</div><div class="cmd-meta">Módulo 2</div></div>
+                <div class="cmd-card" draggable="true" id="push"><div class="cmd-title">git push</div><div class="cmd-meta">Módulo 2</div></div>
+                <div class="cmd-card" draggable="true" id="clone"><div class="cmd-title">git clone</div><div class="cmd-meta">Módulo 2</div></div>
+                <div class="cmd-card" draggable="true" id="branch"><div class="cmd-title">git branch</div><div class="cmd-meta">Módulo 3</div></div>
+                <div class="cmd-card" draggable="true" id="merge"><div class="cmd-title">git merge</div><div class="cmd-meta">Módulo 4</div></div>
+                <div class="cmd-card" draggable="true" id="reset"><div class="cmd-title">git reset</div><div class="cmd-meta">Módulo 5</div></div>
             </div>
 
             <div class="center-stage">
@@ -479,7 +507,7 @@
     </div>
 
     <div class="instruction-tip">
-        💡 Consejo pedagógico: Lee la lección en "Teoría" y salta a la pestaña del "Laboratorio" para arrastrar el comando correspondiente.
+        💡 Plataforma de Capacitación Técnica Avanzada - Todo en Uno.
     </div>
 
     <script>
@@ -488,6 +516,8 @@
             config: { command: 'git config', syntax: 'git config --global user.name "Johnny" && git config --global user.email "johnny@ejemplo.com"', module: 'Módulo 1: Firma', text: '¡Identidad lista! Con --global guardas tu firma en tu carpeta Home (~/.gitconfig). En servidores compartidos, esto te aísla completamente de otros desarrolladores sin interferir en sus identidades.' },
             init: { command: 'git init', syntax: 'git init', module: 'Módulo 1: Fundación', text: '¡Activado! Creaste el repositorio oculto (.git). Desde ahora vigilo esta carpeta localmente, lista para capturar cada área de preparación.' },
             commit: { command: 'git commit -m "msg"', syntax: 'git add . && git commit -m "feat: mi primera funcionalidad"', module: 'Módulo 1: Guardado', text: '¡Instantánea registrada! Al confirmar el commit, empaqueté tus cambios de forma definitiva en el historial local. Tienes un punto de retorno seguro.' },
+            remote: { command: 'git remote add', syntax: 'git remote add origin https://github.com/usuario/repositorio.git', module: 'Módulo 2: Enlace Remoto', text: '¡Puente multidimensional activado! Este comando le dice a tu repositorio local que existe un servidor central en la nube llamado "origin", mapeando la URL del GitHub remoto.' },
+            push: { command: 'git push -u', syntax: 'git branch -M main && git push -u origin main', module: 'Módulo 2: Empuje en la Nube', text: '¡Subida a la nube exitosa! Envías tus commits locales al servidor central de GitHub. El flag -u vincula la rama de forma permanente para futuros atajos.' },
             clone: { command: 'git clone <url>', syntax: 'git clone https://github.com/usuario/mi-proyecto.git', module: 'Módulo 2: Descentralizar', text: '¡Duplicación perfecta! Descargaste un repositorio remoto completo a tu disco local, permitiéndote trabajar de manera distribuida y 100% desconectada.' },
             branch: { command: 'git branch <nombre>', syntax: 'git checkout -b feature/nueva-vista', module: 'Módulo 3: Ramificaciones', text: '¡Línea de tiempo alterna activada! Creas un universo paralelo para programar nuevas funciones aisladas, manteniendo intacta la producción de la rama principal.' },
             merge: { command: 'git merge <rama>', syntax: 'git merge feature/nueva-vista', module: 'Módulo 4: El Match', text: '¡Fusión dimensional! Fusionamos los cambios de la feature con la línea de código principal. Si hay colisiones en las mismas líneas, resolveremos el conflicto juntos.' },
@@ -579,6 +609,8 @@
                 <div class="cmd-card" draggable="true" id="config"><div class="cmd-title">git config</div><div class="cmd-meta">Módulo 1</div></div>
                 <div class="cmd-card" draggable="true" id="init"><div class="cmd-title">git init</div><div class="cmd-meta">Módulo 1</div></div>
                 <div class="cmd-card" draggable="true" id="commit"><div class="cmd-title">git commit</div><div class="cmd-meta">Módulo 1</div></div>
+                <div class="cmd-card" draggable="true" id="remote"><div class="cmd-title">git remote</div><div class="cmd-meta">Módulo 2</div></div>
+                <div class="cmd-card" draggable="true" id="push"><div class="cmd-title">git push</div><div class="cmd-meta">Módulo 2</div></div>
                 <div class="cmd-card" draggable="true" id="clone"><div class="cmd-title">git clone</div><div class="cmd-meta">Módulo 2</div></div>
                 <div class="cmd-card" draggable="true" id="branch"><div class="cmd-title">git branch</div><div class="cmd-meta">Módulo 3</div></div>
                 <div class="cmd-card" draggable="true" id="merge"><div class="cmd-title">git merge</div><div class="cmd-meta">Módulo 4</div></div>
