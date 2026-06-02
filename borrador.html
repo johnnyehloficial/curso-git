@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Multi-Dimensional Learning Platform</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e24;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            max-width: 800px;
+            position: relative;
+            width: 100%;
+        }
+        h1 {
+            font-size: 2.3rem;
+            color: #f05032;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        p.subtitle {
+            font-size: 1rem;
+            color: #a0a0a5;
+        }
+        
+        /* Sistema de Navegación por Pestañas (Regresamos a 2 Pestañas puramente técnicas) */
+        .tabs-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 1100px;
+            border-bottom: 2px solid #3a3a4a;
+            padding-bottom: 5px;
+        }
+        .tab-btn {
+            background-color: #25252f;
+            color: #abb2bf;
+            border: 2px solid #4e4e5a;
+            border-bottom: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border-radius: 6px 6px 0 0;
+            transition: all 0.2s ease;
+        }
+        .tab-btn:hover {
+            color: #fff;
+            background-color: #2a2a35;
+        }
+        .tab-btn.active {
+            background-color: #f05032;
+            color: #fff;
+            border-color: #f05032;
+        }
+
+        /* Contenedores de las Pestañas */
+        .tab-content {
+            display: none;
+            width: 100%;
+            max-width: 1100px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Botón de Reset dentro del Lab */
+        .btn-reset {
+            background-color: #e06c75;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            float: right;
+            margin-bottom: 10px;
+        }
+        .btn-reset:hover { background-color: #f05032; }
+
+        /* PESTAÑA DEL LAB: Estructura del Tablero del Cómic */
+        .workspace {
+            display: grid;
+            grid-template-columns: 220px 1fr 220px;
+            width: 100%;
+            height: 480px;
+            gap: 20px;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #3a3a4a;
+            clear: both;
+        }
+        .panel-side {
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 2px dashed #4e4e5a;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+        }
+        .panel-side h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            text-align: center;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        #leftDeck h3 { color: #61afef; }
+        #rightDeck h3 { color: #98c379; }
+
+        .center-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end; 
+            position: relative;
+        }
+        .drop-zone {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 3px dashed rgba(240, 80, 50, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        .drop-zone.hover {
+            background-color: rgba(240, 80, 50, 0.15);
+            border-color: #f05032;
+        }
+        .octocat-svg { width: 90px; height: 90px; fill: #ffffff; }
+        .character-label {
+            margin-top: 5px;
+            background-color: #f05032;
+            color: #fff;
+            padding: 2px 10px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            border-radius: 20px;
+        }
+
+        .comic-bubble {
+            width: 100%;
+            max-width: 500px;
+            background-color: #ffffff;
+            color: #111115;
+            padding: 15px 20px;
+            border-radius: 16px;
+            border: 4px solid #111115;
+            box-shadow: 0 6px 0px rgba(0,0,0,0.15);
+            margin-bottom: 20px; 
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .comic-bubble.show { opacity: 1; transform: scale(1); }
+        .comic-bubble::after {
+            content: ''; position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%);
+            border-width: 15px 15px 0 15px; border-style: solid; border-color: #ffffff transparent transparent transparent;
+        }
+
+        .comic-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed #ccc; padding-bottom: 5px; margin-bottom: 8px; }
+        .comic-command { font-family: 'Courier New', Courier, monospace; font-size: 1.1rem; font-weight: bold; color: #f05032; background-color: #fdf0ed; padding: 2px 6px; border-radius: 4px; }
+        .comic-module-tag { font-size: 0.75rem; font-weight: bold; background-color: #e2e8f0; color: #4a5568; padding: 2px 6px; border-radius: 4px; }
+        .comic-text { font-size: 0.95rem; line-height: 1.4; font-weight: 500; }
+
+        .cmd-card {
+            background-color: #25252f; border: 2px solid #4e4e5a; border-radius: 6px; padding: 8px 5px; text-align: center; cursor: grab; user-select: none;
+        }
+        .cmd-title { font-family: 'Courier New', Courier, monospace; font-weight: bold; color: #61afef; font-size: 0.9rem; }
+        .cmd-meta { font-size: 0.65rem; color: #e5c07b; text-transform: uppercase; margin-top: 2px; }
+        #rightDeck .cmd-card { border-color: #98c379; background-color: #212824; cursor: pointer; }
+
+        /* CUADRO DE CÓDIGO INFERIOR */
+        .code-snippet-container {
+            width: 100%; margin-top: 20px; background-color: #141416; border: 2px solid #2d2d38; border-radius: 8px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .code-box-wrapper { display: flex; flex-direction: column; gap: 4px; width: 80%; }
+        .code-box-label { font-size: 0.75rem; color: #abb2bf; text-transform: uppercase; }
+        .code-content { font-family: 'Courier New', Courier, monospace; font-size: 1.1rem; color: #98c379; }
+        .btn-copy { background-color: #4e4e5a; color: #fff; border: none; padding: 10px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: all 0.2s ease; }
+        .btn-copy:hover { background-color: #61afef; }
+        .btn-copy.copied, .inline-copy-btn.copied { background-color: #98c379 !important; }
+
+        /* PESTAÑA DE TEORÍA: Diseño de la Guía del Curso Teórico */
+        .course-guide {
+            background-color: #25252f;
+            border: 2px solid #3a3a4a;
+            border-radius: 12px;
+            padding: 30px;
+            max-height: 650px;
+            overflow-y: auto;
+        }
+        .module-section {
+            margin-bottom: 35px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 25px;
+        }
+        .module-section:last-child { border: none; margin-bottom: 0; padding-bottom: 0; }
+        .module-title {
+            font-size: 1.4rem;
+            color: #e5c07b;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .module-badge {
+            background-color: #f05032;
+            color: #fff;
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+        .course-guide h4 {
+            color: #61afef;
+            margin: 12px 0 6px 0;
+            font-size: 1.05rem;
+        }
+        .course-guide p, .course-guide li {
+            font-size: 0.98rem;
+            color: #abb2bf;
+            line-height: 1.6;
+        }
+        .course-guide ul {
+            margin-left: 20px;
+            margin-top: 5px;
+        }
+        
+        /* Contenedor Flex para código e inline copy */
+        .theory-code-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #141416;
+            margin-top: 8px;
+            border-left: 4px solid #f05032;
+            border-radius: 0 6px 6px 0;
+            padding-right: 15px;
+        }
+        .course-code-block {
+            padding: 10px 15px;
+            font-family: 'Courier New', Courier, monospace;
+            color: #98c379;
+            background-color: transparent;
+        }
+        .inline-copy-btn {
+            background-color: #3e4452;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .inline-copy-btn:hover { background-color: #61afef; }
+        
+        .important-note {
+            background-color: rgba(224, 108, 117, 0.1);
+            border-left: 4px solid #e06c75;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .explanation-box {
+            background-color: #1a1a22;
+            border: 1px solid #3a3a4a;
+            padding: 12px 15px;
+            margin-top: 10px;
+            border-radius: 6px;
+        }
+        .explanation-box p {
+            font-size: 0.9rem !important;
+            color: #abb2bf !important;
+        }
+
+        .instruction-tip { margin-top: 15px; font-size: 0.9rem; color: #8a8a93; font-style: italic; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Git Multi-Dimensional Learning Platform</h1>
+        <p class="subtitle">Aprende conceptos fundamentales, experimenta en el laboratorio y domina el trabajo en paralelo.</p>
+    </header>
+
+    <!-- Barra de Navegación del Sistema de Pestañas (Regresamos a la estructura limpia de 2 pestañas) -->
+    <div class="tabs-nav">
+        <button class="tab-btn active" id="btn-tab-course" onclick="switchTab('course')">Teoría & Guía del Curso</button>
+        <button class="tab-btn" id="btn-tab-lab" onclick="switchTab('lab')">Cómic Interactivo (Laboratorio)</button>
+    </div>
+
+    <!-- PESTAÑA 1: TEORÍA Y GUÍA DEL CURSO -->
+    <div id="tab-course" class="tab-content active">
+        <div class="course-guide">
+            
+            <div class="module-section">
+                <div class="module-title"><span class="module-badge">Módulo 1</span> La Fundación e Identidad Local</div>
+                <p><strong>Concepto clave:</strong> El código viaja por tres estados locales. Al trabajar en entornos distribuidos o servidores multiusuario (como Ubuntu), Git exige de forma estricta que configures tu identidad antes de registrar tu primer commit.</p>
+                
+                <div class="important-note">
+                    <strong>💡 Regla de Oro Multi-Usuario:</strong> El parámetro <code>--global</code> escribe tus datos exclusivamente en <code>~/.gitconfig</code> dentro de tu propio espacio personal. Nadie más podrá pisar tu firma.
+                </div>
+
+                <h4>Laboratorio de Configuración y Confirmación:</h4>
+                <ul>
+                    <li>1. Registra tu firma de autor en tu cuenta de usuario:</li>
+                    <div class="theory-code-container">
+                        <div class="course-code-block" id="code-theory-0a">git config --global user.name "Johnny TuApellido"</div>
+                        <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-0a', this)">Copiar</button>
+                    </div>
+                    <div class="theory-code-container">
+                        <div class="course-code-block" id="code-theory-0b">git config --global user.email "tu-correo@ejemplo.com"</div>
+                        <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-0b', this)">Copiar</button>
+                    </div>
+                    
+                    <li style="margin-top: 15px;">2. Inicializa tu repositorio local:</li>
+                    <div class="theory-code-container">
+                        <div class="course-code-block" id="code-theory-1">git init</div>
+                        <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-1', this)">Copiar</button>
+                    </div>
+                    
+                    <li>3. Prepara el index.html y haz tu primer commit histórico:</li>
+                    <div class="theory-code-container">
+                        <div class="course-code-block" id="code-theory-2">git add index.html && git commit -m "feat: setup estructura inicial"</div>
+                        <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-2', this)">Copiar</button>
+                    </div>
+                </ul>
+            </div>
+
+            <!-- MÓDULO 2 ENRIQUECIDO COMPLETAMENTE CON TU INFORMACIÓN TÉCNICA -->
+            <div class="module-section">
+                <div class="module-title"><span class="module-badge">Módulo 2</span> La Nube, Vinculación y Descentralización</div>
+                <p><strong>Concepto clave:</strong> Tu repositorio local es completamente independiente de la nube. Vincular un servidor remoto sirve como respaldo masivo y para cooperar con terceros de forma distribuida.</p>
+                
+                <h4>🚀 Comandos para subir tu proyecto a GitHub</h4>
+                <p>Ejecuta estos comandos en orden dentro de la carpeta <code>curso-git</code> en tu terminal de Ubuntu:</p>
+                
+                <ul>
+                    <li style="margin-top: 10px;">1. Creamos la rama principal por defecto con el nombre estándar moderno ('main'):</li>
+                    <div class="theory-code-container">
+                        <div class="course-code-block" id="code-theory-cloud1">git branch -M main</div>
+                        <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-cloud1', this)">Copiar</button>
+                    </div>
+                    <div class="explanation-box">
+                        <p><strong>🔍 Desglose Técnico Multidimensional:</strong> Renombra la rama por defecto a main. Esto asegura la compatibilidad exacta con la configuración actual de GitHub.</p>
+                    </div>
+
+                    <li style="margin-top: 15px;">2. Vinculamos tu servidor local con el repositorio vacío que creaste en la nube:</li>
+                    <div class="theory-code-container">
+                        <div class="course-code-block" id="code-theory-cloud2">git remote add origin https://github.com/TU_USUARIO/TU_REPOSITORIO.git</div>
+                        <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-cloud2', this)">Copiar</button>
+                    </div>
+                    <div class="explanation-box">
+                        <p><strong>🔍 Desglose Técnico Multidimensional:</strong> Este es el puente de descentralización. Le dice a tu Git local: "A partir de ahora, el servidor remoto en la nube se llamará 'origin' y se encuentra en esta URL".</p>
+                    </div>
+
+                    <li style="margin-top: 15px;">3. Empujamos el código local hacia la nube por primera vez:</li>
+                    <div class="theory-code-container">
+                        <div class="course-code-block" id="code-theory-cloud3">git push -u origin main</div>
+                        <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-cloud3', this)">Copiar</button>
+                    </div>
+                    <div class="explanation-box">
+                        <p><strong>🔍 Desglose Técnico Multidimensional:</strong> El comando clave. Envía tus commits locales hacia la rama main del remoto origin. El flag -u (upstream) es un atajo crucial: memoriza la conexión para que en las próximas clases tus alumnos solo tengan que escribir git push o git pull sin añadir nada más.</p>
+                    </div>
+                </ul>
+
+                <div class="important-note" style="border-left-color: #e5c07b; background-color: rgba(229, 192, 123, 0.05);">
+                    <strong>⚠️ Nota de autenticación:</strong> Al ejecutar el git push, el servidor te pedirá tus credenciales. Recuerda que desde hace unos años GitHub no acepta tu contraseña web en la terminal. Deberás introducir tu nombre de usuario y, en lugar de la contraseña, pegar tu Personal Access Token (PAT) o usar una clave SSH configurada en tu servidor Ubuntu.
+                </div>
+
+                <h4 style="margin-top: 20px;">Clonación en paralelo:</h4>
+                <ul>
+                    <li>Clonar un repositorio existente desde la nube para trabajar en otra máquina de forma independiente:</li>
+                    <div class="theory-code-container">
+                        <div class="course-code-block" id="code-theory-3">git clone https://github.com/usuario/repositorio.git</div>
+                        <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-3', this)">Copiar</button>
+                    </div>
+                </ul>
+            </div>
+
+            <div class="module-section">
+                <div class="module-title"><span class="module-badge">Módulo 3</span> Trabajo en Paralelo (Features y Ramas)</div>
+                <p><strong>Concepto clave:</strong> Las ramas abren líneas de tiempo independientes para programar aisladamente.</p>
+                <h4>Laboratorio Práctico:</h4>
+                <ul>
+                    <li>Crea una rama paralela e intégrate a ella:</li>
+                    <div class="theory-code-container">
+                        <div class="course-code-block" id="code-theory-4">git checkout -b feature/nueva-interfaz</div>
+                        <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-4', this)">Copiar</button>
+                    </div>
+                </ul>
+            </div>
+
+            <div class="module-section">
+                <div class="module-title"><span class="module-badge">Módulo 4</span> Resolución de Conflictos e Integración</div>
+                <p><strong>Concepto clave:</strong> Integrar une universos de código. Si hay cambios concurrentes en la misma línea, se genera un conflicto manual.</p>
+                <h4>Laboratorio Práctico:</h4>
+                <ul>
+                    <li>Regresa a producción y atrae los cambios terminados de la feature:</li>
+                    <div class="theory-code-container">
+                        <div class="course-code-block" id="code-theory-5">git checkout main && git merge feature/nueva-interfaz</div>
+                        <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-5', this)">Copiar</button>
+                    </div>
+                </ul>
+            </div>
+
+            <div class="module-section">
+                <div class="module-title"><span class="module-badge">Módulo 5</span> Viajes en el Tiempo (La Reversa)</div>
+                <p><strong>Concepto clave:</strong> Habilidad de destruir o revertir commits erróneos para sanar el proyecto.</p>
+                <h4>Laboratorio Práctico:</h4>
+                <ul>
+                    <li>Fuerza tu espacio de trabajo a regresar al estado de un commit del pasado:</li>
+                    <div class="theory-code-container">
+                        <div class="course-code-block" id="code-theory-6">git reset --hard HEAD~1</div>
+                        <button class="inline-copy-btn" onclick="copyTheoryCode('code-theory-6', this)">Copiar</button>
+                    </div>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- PESTAÑA 2: CONTENIDO DEL LABORATORIO INTERACTIVO -->
+    <div id="tab-lab" class="tab-content">
+        <button class="btn-reset" onclick="resetPlatform()">Reiniciar Lab</button>
+        
+        <div class="workspace">
+            <div class="panel-side" id="leftDeck">
+                <h3>Por Aprender</h3>
+                <div class="cmd-card" draggable="true" id="config"><div class="cmd-title">git config</div><div class="cmd-meta">Módulo 1</div></div>
+                <div class="cmd-card" draggable="true" id="init"><div class="cmd-title">git init</div><div class="cmd-meta">Módulo 1</div></div>
+                <div class="cmd-card" draggable="true" id="commit"><div class="cmd-title">git commit</div><div class="cmd-meta">Módulo 1</div></div>
+                <div class="cmd-card" draggable="true" id="remote"><div class="cmd-title">git remote</div><div class="cmd-meta">Módulo 2</div></div>
+                <div class="cmd-card" draggable="true" id="push"><div class="cmd-title">git push</div><div class="cmd-meta">Módulo 2</div></div>
+                <div class="cmd-card" draggable="true" id="clone"><div class="cmd-title">git clone</div><div class="cmd-meta">Módulo 2</div></div>
+                <div class="cmd-card" draggable="true" id="branch"><div class="cmd-title">git branch</div><div class="cmd-meta">Módulo 3</div></div>
+                <div class="cmd-card" draggable="true" id="merge"><div class="cmd-title">git merge</div><div class="cmd-meta">Módulo 4</div></div>
+                <div class="cmd-card" draggable="true" id="reset"><div class="cmd-title">git reset</div><div class="cmd-meta">Módulo 5</div></div>
+            </div>
+
+            <div class="center-stage">
+                <div class="comic-bubble" id="comicBubble">
+                    <div class="comic-header">
+                        <span class="comic-command" id="bubbleCommand">¡Hola Desarrollador!</span>
+                        <span class="comic-module-tag" id="bubbleModule">Inicio</span>
+                    </div>
+                    <div class="comic-text" id="bubbleText">
+                        Soy tu Octocat Mentor. Toma un comando de la pila izquierda y arrástralo sobre mí para ver cómo funciona el desarrollo en paralelo y descentralizado.
+                    </div>
+                </div>
+
+                <div class="drop-zone" id="dropZone">
+                    <svg class="octocat-svg" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.58-3.58-8-8-8z"></path>
+                        <path d="M6.5 8.5 L8 7 L9.5 8.5 L8 10 Z" fill="#f05032" stroke="#ffffff" stroke-width="0.3"/>
+                    </svg>
+                    <div class="character-label">OCTOCAT MENTOR</div>
+                </div>
+            </div>
+
+            <div class="panel-side" id="rightDeck">
+                <h3>Completados</h3>
+            </div>
+        </div>
+
+        <div class="code-snippet-container">
+            <div class="code-box-wrapper">
+                <span class="code-box-label">Consola de Comandos (Copiar y Pegar)</span>
+                <div class="code-content" id="codeTerminal">$ Selecciona o arrastra un comando para ver la sintaxis exacta...</div>
+            </div>
+            <button class="btn-copy" id="btnCopy" onclick="copyCodeToClipboard()">Copiar Código</button>
+        </div>
+    </div>
+
+    <div class="instruction-tip">
+        💡 Plataforma de Capacitación Técnica Avanzada - Todo en Uno.
+    </div>
+
+    <script>
+        // Base de conocimiento unificada
+        const repoKnowledge = {
+            config: { command: 'git config', syntax: 'git config --global user.name "Johnny" && git config --global user.email "johnny@ejemplo.com"', module: 'Módulo 1: Firma', text: '¡Identidad lista! Con --global guardas tu firma en tu carpeta Home (~/.gitconfig). En servidores compartidos, esto te aísla completamente de otros desarrolladores sin interferir en sus identidades.' },
+            init: { command: 'git init', syntax: 'git init', module: 'Módulo 1: Fundación', text: '¡Activado! Creaste el repositorio oculto (.git). Desde ahora vigilo esta carpeta localmente, lista para capturar cada área de preparación.' },
+            commit: { command: 'git commit -m "msg"', syntax: 'git add . && git commit -m "feat: mi primera funcionalidad"', module: 'Módulo 1: Guardado', text: '¡Instantánea registrada! Al confirmar el commit, empaqueté tus cambios de forma definitiva en el historial local. Tienes un punto de retorno seguro.' },
+            remote: { command: 'git remote add', syntax: 'git remote add origin https://github.com/usuario/repositorio.git', module: 'Módulo 2: Enlace Remoto', text: '¡Puente multidimensional activado! Este comando le dice a tu repositorio local que existe un servidor central en la nube llamado "origin", mapeando la URL del GitHub remoto.' },
+            push: { command: 'git push -u', syntax: 'git branch -M main && git push -u origin main', module: 'Módulo 2: Empuje en la Nube', text: '¡Subida a la nube exitosa! Envías tus commits locales al servidor central de GitHub. El flag -u vincula la rama de forma permanente para futuros atajos.' },
+            clone: { command: 'git clone <url>', syntax: 'git clone https://github.com/usuario/mi-proyecto.git', module: 'Módulo 2: Descentralizar', text: '¡Duplicación perfecta! Descargaste un repositorio remoto completo a tu disco local, permitiéndote trabajar de manera distribuida y 100% desconectada.' },
+            branch: { command: 'git branch <nombre>', syntax: 'git checkout -b feature/nueva-vista', module: 'Módulo 3: Ramificaciones', text: '¡Línea de tiempo alterna activada! Creas un universo paralelo para programar nuevas funciones aisladas, manteniendo intacta la producción de la rama principal.' },
+            merge: { command: 'git merge <rama>', syntax: 'git merge feature/nueva-vista', module: 'Módulo 4: El Match', text: '¡Fusión dimensional! Fusionamos los cambios de la feature con la línea de código principal. Si hay colisiones en las mismas líneas, resolveremos el conflicto juntos.' },
+            reset: { command: 'git reset --hard', syntax: 'git reset --hard HEAD~1', module: 'Módulo 5: Reversa', text: '¡Viaje en el tiempo instantáneo! Descartamos modificaciones problemáticas obligando al directorio a volver al estado exacto de un commit del pasado.' }
+        };
+
+        const leftDeck = document.getElementById('leftDeck');
+        const rightDeck = document.getElementById('rightDeck');
+        const dropZone = document.getElementById('dropZone');
+        const bubble = document.getElementById('comicBubble');
+        const codeTerminal = document.getElementById('codeTerminal');
+        const btnCopy = document.getElementById('btnCopy');
+        let draggedCard = null;
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            if(tabName === 'lab') {
+                document.getElementById('btn-tab-lab').classList.add('active');
+                document.getElementById('tab-lab').classList.add('active');
+            } else {
+                document.getElementById('btn-tab-course').classList.add('active');
+                document.getElementById('tab-course').classList.add('active');
+            }
+        }
+
+        function initDragEvents() {
+            document.querySelectorAll('#leftDeck .cmd-card').forEach(card => {
+                card.addEventListener('dragstart', () => { card.classList.add('dragging'); draggedCard = card; });
+                card.addEventListener('dragend', () => card.classList.remove('dragging'));
+            });
+        }
+
+        function updateCharacterSpeech(id) {
+            const data = repoKnowledge[id];
+            document.getElementById('bubbleCommand').innerText = data.command;
+            document.getElementById('bubbleModule').innerText = data.module;
+            document.getElementById('bubbleText').innerText = data.text;
+            codeTerminal.innerText = data.syntax;
+            btnCopy.innerText = "Copiar Código";
+            btnCopy.classList.remove('copied');
+            
+            bubble.classList.remove('show');
+            void bubble.offsetWidth; 
+            bubble.classList.add('show');
+        }
+
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('hover'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('hover'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('hover');
+            if (draggedCard) {
+                const id = draggedCard.id;
+                updateCharacterSpeech(id);
+                draggedCard.setAttribute('draggable', 'false');
+                draggedCard.addEventListener('click', () => updateCharacterSpeech(id));
+                rightDeck.appendChild(draggedCard);
+                draggedCard = null;
+            }
+        });
+
+        function copyCodeToClipboard() {
+            const code = codeTerminal.innerText;
+            if (code.startsWith('$')) return;
+            navigator.clipboard.writeText(code).then(() => {
+                btnCopy.innerText = "¡Copiado!";
+                btnCopy.classList.add('copied');
+            });
+        }
+
+        function copyTheoryCode(elementId, buttonElement) {
+            const codeText = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                buttonElement.innerText = "¡Copiado!";
+                buttonElement.classList.add('copied');
+                setTimeout(() => {
+                    buttonElement.innerText = "Copiar";
+                    buttonElement.classList.remove('copied');
+                }, 1800);
+            });
+        }
+
+        function resetPlatform() {
+            rightDeck.querySelectorAll('.cmd-card').forEach(card => card.remove());
+            leftDeck.innerHTML = `
+                <h3>Por Aprender</h3>
+                <div class="cmd-card" draggable="true" id="config"><div class="cmd-title">git config</div><div class="cmd-meta">Módulo 1</div></div>
+                <div class="cmd-card" draggable="true" id="init"><div class="cmd-title">git init</div><div class="cmd-meta">Módulo 1</div></div>
+                <div class="cmd-card" draggable="true" id="commit"><div class="cmd-title">git commit</div><div class="cmd-meta">Módulo 1</div></div>
+                <div class="cmd-card" draggable="true" id="remote"><div class="cmd-title">git remote</div><div class="cmd-meta">Módulo 2</div></div>
+                <div class="cmd-card" draggable="true" id="push"><div class="cmd-title">git push</div><div class="cmd-meta">Módulo 2</div></div>
+                <div class="cmd-card" draggable="true" id="clone"><div class="cmd-title">git clone</div><div class="cmd-meta">Módulo 2</div></div>
+                <div class="cmd-card" draggable="true" id="branch"><div class="cmd-title">git branch</div><div class="cmd-meta">Módulo 3</div></div>
+                <div class="cmd-card" draggable="true" id="merge"><div class="cmd-title">git merge</div><div class="cmd-meta">Módulo 4</div></div>
+                <div class="cmd-card" draggable="true" id="reset"><div class="cmd-title">git reset</div><div class="cmd-meta">Módulo 5</div></div>
+            `;
+            document.getElementById('bubbleCommand').innerText = "¡Hola!";
+            document.getElementById('bubbleText').innerText = "Plataforma reiniciada. ¡Comencemos de nuevo!";
+            codeTerminal.innerText = "$ Selecciona o arrastra un comando para ver la sintaxis exacta...";
+            btnCopy.innerText = "Copiar Código";
+            btnCopy.classList.remove('copied');
+            initDragEvents();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => { initDragEvents(); bubble.classList.add('show'); });
+    </script>
+</body>
+</html>
